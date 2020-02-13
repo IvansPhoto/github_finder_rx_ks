@@ -207,7 +207,7 @@ class UserProfile {
 				this.createdAt,
 				this.updatedAt});
 
-	UserProfile.fromJson(Map<String, dynamic> json) {
+	UserProfile.fromJson(Map<String, dynamic> json) { //TODO Check to null.
 		login = json['login'];
 		id = json['id'];
 		nodeId = json['node_id'];
@@ -224,8 +224,8 @@ class UserProfile {
 		reposUrl = json['repos_url'];
 		eventsUrl = json['events_url'];
 		receivedEventsUrl = json['received_events_url'];
-		type = json['type'];
-		siteAdmin = json['site_admin'];
+		type = json['type'] ?? 'not define';
+		siteAdmin = json['site_admin'] ?? 'not define';
 		name = json['name'] == null || json['name'] == '' ? 'not definied' : json['name'];
 		company = json['company'] == null || json['company'] == '' ? 'not definied' : json['company'];
 		blog = json['blog'] == null || json['blog'] == '' ? 'not definied' : json['blog'];
@@ -233,8 +233,8 @@ class UserProfile {
 		email = json['email'] == null || json['email'] == '' ? 'not definied' : json['email'];
 		hireable = json['hireable'] == null || json['hireable'] == '' ? 'not definied' : json['hireable'];
 		bio = json['bio'] == null || json['bio'] == '' ? 'not definied' : json['bio'];
-		publicRepos = json['public_repos'];
-		publicGists = json['public_gists'];
+		publicRepos = json['public_repos'] ?? 'not define';
+		publicGists = json['public_gists'] ?? 'not define';
 		followers = json['followers'];
 		following = json['following'];
 		createdAt = json['created_at'];

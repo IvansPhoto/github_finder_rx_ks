@@ -26,6 +26,7 @@ class ResultSearchPage extends StatelessWidget {
       ),
       body: StreamBuilder(
           stream: _streamService.streamGHUResponse$,
+          // ignore: missing_return
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData)
               return LoadingScreen();

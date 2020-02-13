@@ -11,6 +11,7 @@
         android:label="github_finder_rx_ks"
         android:icon="@mipmap/ic_launcher">
         <activity
+            android:screenOrientation="sensorPortrait"
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

@@ -14,10 +14,12 @@ class _SearchingUsersPageState extends State<SearchingUsersPage> {
 
   TextEditingController _userNameKey;
   TextEditingController _perPageKey;
+  String _widgetType;
 
   @override
   void initState() {
     super.initState();
+    _widgetType = 'Scaffold';
     _userNameKey = TextEditingController();
     _perPageKey = TextEditingController(text: _streamService.currentSearch.resultPerPage.toString());
   }
@@ -33,7 +35,26 @@ class _SearchingUsersPageState extends State<SearchingUsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: MainDrawer(),
-      appBar: AppBar(title: Text('Index Page'), elevation: 0, centerTitle: true),
+      appBar: AppBar(
+        title: Text('Index Page'),
+        elevation: 0,
+        centerTitle: true,
+        actions: <Widget>[
+          Builder(
+            builder: (BuildContext context) => PopupMenuButton(
+                captureInheritedThemes: true,
+                elevation: 0,
+                onSelected: (result) {
+                  setState(() => _widgetType = result);
+                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Result will be shown on $_widgetType')));
+                },
+                itemBuilder: (BuildContext context) => [
+                      const PopupMenuItem(child: Text('Scaffold'), value: 'Scaffold'),
+                      const PopupMenuItem(child: Text('Slivers'), value: 'Slivers'),
+                    ]),
+          )
+        ],
+      ),
       body: Center(
         child: Form(
             key: _formKey,
@@ -71,7 +92,6 @@ class _SearchingUsersPageState extends State<SearchingUsersPage> {
                         return null;
                     },
                   ),
-
                   SizedBox(height: 10),
                   RaisedButton.icon(
                       elevation: 0,
@@ -81,13 +101,20 @@ class _SearchingUsersPageState extends State<SearchingUsersPage> {
                           _streamService.currentSearch.resultPerPage = int.parse(_perPageKey.text);
                           _streamService.currentSearch.pageNumber = 1;
                           ApiRequests.searchUsers(context: context, streamService: _streamService);
-                          Navigator.pushNamed(context, RouteNames.users);
+                          switch (_widgetType) {
+                            case 'Scaffold':
+                              Navigator.pushNamed(context, RouteNames.users);
+                              break;
+                            case 'Slivers':
+                              Navigator.pushNamed(context, RouteNames.usersSliver);
+                              break;
+                          }
                         } else {
                           return null;
                         }
                       },
                       icon: Icon(Icons.search),
-                      label: Text('Start searching'))
+                      label: Text('Start searching')),
                 ],
               ),
             )),

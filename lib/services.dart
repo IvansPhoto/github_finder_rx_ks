@@ -10,6 +10,7 @@ abstract class RouteNames {
   static const String index = '/';
   static const String menu = '/menu';
   static const String users = '/users';
+  static const String usersSliver = '/usersSliver';
   static const String profile = '/profile';
   static const String loading = '/loading';
   static const String error = '/error';
@@ -32,7 +33,7 @@ class SearchParameters {
 }
 
 class StreamService {
-  final _searchParameters = BehaviorSubject.seeded(SearchParameters(pageNumber: 1, resultPerPage: 5));
+  final _searchParameters = BehaviorSubject.seeded(SearchParameters(pageNumber: 1, resultPerPage: 10));
   Stream get streamSearch$ => _searchParameters.stream;
   SearchParameters get currentSearch => _searchParameters.value;
   set setSearch(currentSearch) => _searchParameters.add(currentSearch);

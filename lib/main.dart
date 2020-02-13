@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:github_finder_rx_ks/pages/ResultSearchPageSlivers.dart';
 import 'package:github_finder_rx_ks/pages/SelectedUsers.dart';
 import 'package:github_finder_rx_ks/supportPages/ErrorScreen.dart';
 import 'package:github_finder_rx_ks/supportPages/LoadingScreen.dart';
@@ -17,6 +18,7 @@ void main() {
     routes: {
       RouteNames.index: (BuildContext context) => SearchingUsersPage(),
       RouteNames.users: (BuildContext context) => ResultSearchPage(),
+      RouteNames.usersSliver: (BuildContext context) => ResultSearchPageSlivers(),
       RouteNames.profile: (BuildContext context) => UserProfilePageFutureBuilder(),
       RouteNames.loading: (BuildContext context) => LoadingScreen(),
       RouteNames.error: (BuildContext context) => ErrorScreen(),
