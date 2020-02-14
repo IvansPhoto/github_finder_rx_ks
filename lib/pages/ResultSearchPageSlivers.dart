@@ -26,6 +26,8 @@ class ResultSearchPageSlivers extends StatelessWidget {
               )
             ],
           ),
+          _SearchingButton(),
+
           StreamBuilder(
               stream: _streamService.streamGHUResponse$,
               builder: (BuildContext context, AsyncSnapshot snapshot) {
