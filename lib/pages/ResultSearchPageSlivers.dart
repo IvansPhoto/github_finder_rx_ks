@@ -108,6 +108,7 @@ class _SliverListUserView extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) => Card(
           elevation: 0,
+          margin: EdgeInsets.symmetric(horizontal: 1, vertical: 3),
           child: Row(
             children: <Widget>[
               Container(
