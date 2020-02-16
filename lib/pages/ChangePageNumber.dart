@@ -10,6 +10,7 @@ class ChangePageNumber extends StatefulWidget {
 class _ChangePageNumberState extends State<ChangePageNumber> {
   final _formKey = GlobalKey<FormState>();
   final _streamService = getIt.get<StreamService>();
+  final _searchParams = getIt.get<SearchParameters>();
 
   TextEditingController _pageNumberKey;
   int _pageNumber;
@@ -22,10 +23,10 @@ class _ChangePageNumberState extends State<ChangePageNumber> {
   @override
   void initState() {
     super.initState();
-    _pageNumberKey = TextEditingController(text: _streamService.currentSearch.pageNumber.toString());
-    _pageNumber = _streamService.currentSearch.pageNumber;
+    _pageNumberKey = TextEditingController(text: _searchParams.pageNumber.toString());
+    _pageNumber = _searchParams.pageNumber;
     _totalCount = _streamService.currentGHUResponse.totalCount;
-    _resultPerPage = _streamService.currentSearch.resultPerPage;
+    _resultPerPage = _searchParams.resultPerPage;
     _theLastPageNumber = (_totalCount / _resultPerPage).ceil();
     _apiMaxPage = (1000 ~/ _resultPerPage).ceil();
     _currentPge = _pageNumber;
@@ -39,6 +40,7 @@ class _ChangePageNumberState extends State<ChangePageNumber> {
 
   @override
   Widget build(BuildContext context) {
+    print('build Scaffold ChangePageNumber');
     return Scaffold(
       appBar: AppBar(title: Text('Select the page number.'), elevation: 0, centerTitle: true),
       body: Center(
@@ -82,8 +84,8 @@ class _ChangePageNumberState extends State<ChangePageNumber> {
                       elevation: 0,
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          _streamService.currentSearch.pageNumber = int.tryParse(_pageNumberKey.text);
-                          ApiRequests.searchUsers(context: context, streamService: _streamService);
+                          _searchParams.pageNumber = int.tryParse(_pageNumberKey.text);
+                          ApiRequests.searchUsers(context: context, streamService: _streamService, searchParams: _searchParams);
                           Navigator.pop(context);
                         }
                         return null;

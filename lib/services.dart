@@ -25,39 +25,37 @@ class SearchParameters {
   int pageNumber;
   int resultPerPage;
 
-  SearchParameters({this.searchString, this.pageNumber = 1, this.resultPerPage = 5});
+  SearchParameters({this.searchString, this.pageNumber, this.resultPerPage});
 
   void increasePage() => pageNumber++;
-
   void decreasePage() => pageNumber--;
 }
 
-class StreamService {
-  final _searchParameters = BehaviorSubject.seeded(SearchParameters(pageNumber: 1, resultPerPage: 10));
-  Stream get streamSearch$ => _searchParameters.stream;
-  SearchParameters get currentSearch => _searchParameters.value;
-  set setSearch(currentSearch) => _searchParameters.add(currentSearch);
+class WidgetTypes {
+  int showResultGridList; //Grid - 0, List - 1.
+  bool imageType; //Fade - false,Indicator -  true.
+  int crossAxisCount;
 
+  WidgetTypes({this.imageType, this.showResultGridList, this.crossAxisCount});
+}
+
+enum userWidgetType {List, Grid}
+
+class StreamService {
   final _gitHubUserResponse = BehaviorSubject<GitHubUserResponse>();
   Stream get streamGHUResponse$ => _gitHubUserResponse.stream;
   GitHubUserResponse get currentGHUResponse => _gitHubUserResponse.value;
   set setGHUResponse(GitHubUserResponse gitHubUserResponse) => _gitHubUserResponse.add(gitHubUserResponse);
 }
 
-class WidgetTypes {
-  int usersGridInsteadList;
-  bool imageType;
-  WidgetTypes({this.imageType = false, this.usersGridInsteadList = 0});
-}
-
 abstract class ApiRequests {
-  static void searchUsers({@required BuildContext context, @required StreamService streamService}) async {
+  static void searchUsers({@required BuildContext context, @required StreamService streamService, @required SearchParameters searchParams}) async {
     streamService.setGHUResponse = null; //Set to null to make 'snapshot.hasData = false' in the page of search result.
     try {
       Response response = await get(
-          'https://api.github.com/search/users?q=${streamService.currentSearch.searchString}&per_page=${streamService.currentSearch.resultPerPage}&page=${streamService.currentSearch.pageNumber}');
+          'https://api.github.com/search/users?q=${searchParams.searchString}&per_page=${searchParams.resultPerPage}&page=${searchParams.pageNumber}');
       print(
-          'https://api.github.com/search/users?q=${streamService.currentSearch.searchString}&per_page=${streamService.currentSearch.resultPerPage}&page=${streamService.currentSearch.pageNumber}');
+          'https://api.github.com/search/users?q=${searchParams.searchString}&per_page=${searchParams.resultPerPage}&page=${searchParams.pageNumber}');
       streamService.setGHUResponse = GitHubUserResponse.fromJson(jsonDecode(response.body), response.headers['status']);
     } catch (error) {
       Navigator.pushNamed(context, RouteNames.error, arguments: error); //Check error type.

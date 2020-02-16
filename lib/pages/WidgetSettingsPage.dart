@@ -28,7 +28,7 @@ class __OptionsRadioState extends State<_OptionsRadio> {
 
   @override
   void initState() {
-    _usersGridInsteadList = _widgetTypes.usersGridInsteadList;
+    _usersGridInsteadList = _widgetTypes.showResultGridList;
 		_imageType = _widgetTypes.imageType;
     super.initState();
   }
@@ -49,14 +49,14 @@ class __OptionsRadioState extends State<_OptionsRadio> {
           RadioListTile(
             title: Text('Set view to List ${_usersGridInsteadList == 0 ? '(current)': ''}'),
             value: 0,
-            groupValue: _widgetTypes.usersGridInsteadList,
-            onChanged: (value) => setState(() => _widgetTypes.usersGridInsteadList = value),
+            groupValue: _widgetTypes.showResultGridList,
+            onChanged: (value) => setState(() => _widgetTypes.showResultGridList = value),
           ),
           RadioListTile(
             title: Text('Set view to Grid ${_usersGridInsteadList == 1 ? '(current)': ''}'),
             value: 1,
-            groupValue: _widgetTypes.usersGridInsteadList,
-            onChanged: (value) => setState(() => _widgetTypes.usersGridInsteadList = value),
+            groupValue: _widgetTypes.showResultGridList,
+            onChanged: (value) => setState(() => _widgetTypes.showResultGridList = value),
           ),
           Divider(
             height: 30,

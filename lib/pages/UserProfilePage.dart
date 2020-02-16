@@ -72,7 +72,7 @@ class UserProfilePage extends StatelessWidget {
               children: <Widget>[
                 Hero(
                   tag: theUserProfile.avatarUrl,
-                  child: ImageUrlIndicator(url: theUserProfile.avatarUrl),
+                  child: ImageUrl(url: theUserProfile.avatarUrl),
                 ),
                 Container(height: 6),
                 _rowProperties(context, 'Login: ', theUserProfile.login),
@@ -112,7 +112,7 @@ class UserProfilePageFutureBuilder extends StatelessWidget {
                   height: MediaQuery.of(context).size.width - _padding * 2,
                   child: Hero(
                     tag: theUserProfile['avatarUrl'],
-                    child: ImageUrlIndicator(url: theUserProfile['avatarUrl']),
+                    child: ImageUrl(url: theUserProfile['avatarUrl']),
                   ),
                 ),
                 Container(height: 6),

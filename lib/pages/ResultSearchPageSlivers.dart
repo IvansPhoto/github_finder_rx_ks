@@ -8,10 +8,11 @@ import 'package:github_finder_rx_ks/apiClasses.dart';
 
 class ResultSearchPageSlivers extends StatelessWidget {
   final _streamService = getIt.get<StreamService>();
-//  final _widgetTypes = getIt.get<WidgetTypes>();
+  final _widgetTypes = getIt.get<WidgetTypes>();
 
   @override
   Widget build(BuildContext context) {
+    print('build Scaffold ResultSearchPageSlivers');
     return SafeArea(
       child: CustomScrollView(
         slivers: <Widget>[
@@ -27,16 +28,21 @@ class ResultSearchPageSlivers extends StatelessWidget {
             ],
           ),
           _SearchingButton(),
-
           StreamBuilder(
               stream: _streamService.streamGHUResponse$,
+              // ignore: missing_return
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (!snapshot.hasData)
                   return _LoadingScreenSliver();
                 else if (_streamService.currentGHUResponse.headerStatus != '200 OK')
                   return _ApiError(_streamService.currentGHUResponse);
                 else
-                  return _GridViewUsers(snapshot.data.users);
+                  switch (_widgetTypes.showResultGridList) {
+                    case 0:
+                      return _SliverListUserView(snapshot.data.users);
+                    case 1:
+                      return _SliverGridUsersView(snapshot.data.users);
+                  }
               }),
           _SearchingButton(),
         ],
@@ -62,9 +68,9 @@ class _LoadingScreenSliver extends StatelessWidget {
   }
 }
 
-class _GridViewUsers extends StatelessWidget {
+class _SliverGridUsersView extends StatelessWidget {
   final List<GitHubUsers> gitHubUsers;
-  _GridViewUsers(this.gitHubUsers);
+  _SliverGridUsersView(this.gitHubUsers);
 
   @override
   Widget build(BuildContext context) {
@@ -83,22 +89,52 @@ class _GridViewUsers extends StatelessWidget {
                   arguments: {'url': gitHubUsers[index].url, 'avatarUrl': gitHubUsers[index].avatarUrl, 'login': gitHubUsers[index].login}),
               child: Hero(
                 tag: gitHubUsers[index].avatarUrl,
-                child: ImageUrlIndicator(url: gitHubUsers[index].avatarUrl),
+                child: ImageUrl(url: gitHubUsers[index].avatarUrl),
               )),
         ),
+        childCount: gitHubUsers.length,
+      ),
+    );
+  }
+}
 
-//        (BuildContext context, int index) => Container(
-//          width: 100,
-//          height: 100,
-//          child: FlatButton(
-//              padding: EdgeInsets.all(0),
-//              onPressed: () => Navigator.pushNamed(context, RouteNames.profile,
-//                  arguments: {'url': gitHubUsers[index].url, 'avatarUrl': gitHubUsers[index].avatarUrl, 'login': gitHubUsers[index].login}),
-//              child: Hero(
-//                tag: gitHubUsers[index].avatarUrl,
-//                child: ImageUrlIndicator(url: gitHubUsers[index].avatarUrl),
-//              )),
-//        ),
+class _SliverListUserView extends StatelessWidget {
+  final List<GitHubUsers> gitHubUsers;
+  _SliverListUserView(this.gitHubUsers);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) => Card(
+          elevation: 0,
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 100,
+                height: 100,
+                child: Hero(
+                  tag: gitHubUsers[index].avatarUrl,
+                  child: ImageUrl(url: gitHubUsers[index].avatarUrl),
+                ),
+              ),
+              Container(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('Login: ' + gitHubUsers[index].login),
+                  Text('Score: ' + gitHubUsers[index].score.toString()),
+                  RaisedButton(
+                    elevation: 0,
+                    onPressed: () => Navigator.pushNamed(context, RouteNames.profile,
+                        arguments: {'url': gitHubUsers[index].url, 'avatarUrl': gitHubUsers[index].avatarUrl, 'login': gitHubUsers[index].login}),
+                    child: Text('View profile'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
         childCount: gitHubUsers.length,
       ),
     );
@@ -107,6 +143,7 @@ class _GridViewUsers extends StatelessWidget {
 
 class _SearchingButton extends StatelessWidget {
   final _streamService = getIt.get<StreamService>();
+  final _searchParams = getIt.get<SearchParameters>();
 
   @override
   Widget build(BuildContext context) {
@@ -118,8 +155,8 @@ class _SearchingButton extends StatelessWidget {
               child: Container(),
             );
           } else {
-            final _pageNumber = _streamService.currentSearch.pageNumber;
-            final _resultPerPage = _streamService.currentSearch.resultPerPage;
+            final _pageNumber = _searchParams.pageNumber;
+            final _resultPerPage = _searchParams.resultPerPage;
             final _totalCount = _streamService.currentGHUResponse.totalCount;
             final int _theLastPageNumber = (_totalCount / _resultPerPage).ceil();
             final int _apiMaxPage = (1000 ~/ _resultPerPage).ceil();
@@ -134,8 +171,8 @@ class _SearchingButton extends StatelessWidget {
                       child: Icon(Icons.navigate_before, size: 35),
                       onPressed: _pageNumber != 1
                           ? () {
-                              _streamService.currentSearch.decreasePage();
-                              ApiRequests.searchUsers(streamService: _streamService, context: context);
+                              _searchParams.decreasePage();
+                              ApiRequests.searchUsers(streamService: _streamService, context: context, searchParams: _searchParams);
                             }
                           : null,
                     ),
@@ -154,8 +191,8 @@ class _SearchingButton extends StatelessWidget {
                       child: Icon(Icons.navigate_next, size: 35),
                       onPressed: ((_totalCount / _resultPerPage) != _pageNumber && _pageNumber < (1000 / _resultPerPage))
                           ? () {
-                              _streamService.currentSearch.increasePage();
-                              ApiRequests.searchUsers(streamService: _streamService, context: context);
+                              _searchParams.increasePage();
+                              ApiRequests.searchUsers(streamService: _streamService, context: context, searchParams: _searchParams);
                             }
                           : null,
                     ),

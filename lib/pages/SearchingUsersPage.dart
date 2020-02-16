@@ -9,8 +9,9 @@ class SearchingUsersPage extends StatefulWidget {
 }
 
 class _SearchingUsersPageState extends State<SearchingUsersPage> {
-  final _streamService = getIt.get<StreamService>();
   final _formKey = GlobalKey<FormState>();
+  final _streamService = getIt.get<StreamService>();
+  final _searchParams = getIt.get<SearchParameters>();
 
   TextEditingController _userNameKey;
   TextEditingController _perPageKey;
@@ -18,21 +19,22 @@ class _SearchingUsersPageState extends State<SearchingUsersPage> {
 
   @override
   void initState() {
-    super.initState();
     _widgetType = 'Scaffold';
     _userNameKey = TextEditingController();
-    _perPageKey = TextEditingController(text: _streamService.currentSearch.resultPerPage.toString());
+    _perPageKey = TextEditingController(text: _searchParams.resultPerPage.toString());
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     _userNameKey.dispose();
     _perPageKey.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print('build Scaffold SearchingUsersPage');
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
@@ -45,8 +47,14 @@ class _SearchingUsersPageState extends State<SearchingUsersPage> {
                 captureInheritedThemes: true,
                 elevation: 0,
                 onSelected: (result) {
-                  setState(() => _widgetType = result);
-                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Result will be shown on $_widgetType')));
+                  _widgetType = result;
+                  Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Result will be shown on $_widgetType'),
+                      elevation: 0,
+                      duration: Duration(milliseconds: 1000),
+                    ),
+                  );
                 },
                 itemBuilder: (BuildContext context) => [
                       const PopupMenuItem(child: Text('Scaffold'), value: 'Scaffold'),
@@ -97,10 +105,10 @@ class _SearchingUsersPageState extends State<SearchingUsersPage> {
                       elevation: 0,
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          _streamService.currentSearch.searchString = _userNameKey.text; //Set search string to object.
-                          _streamService.currentSearch.resultPerPage = int.parse(_perPageKey.text);
-                          _streamService.currentSearch.pageNumber = 1;
-                          ApiRequests.searchUsers(context: context, streamService: _streamService);
+                          _searchParams.searchString = _userNameKey.text; //Set search string to object.
+                          _searchParams.resultPerPage = int.parse(_perPageKey.text);
+                          _searchParams.pageNumber = 1;
+                          ApiRequests.searchUsers(context: context, streamService: _streamService, searchParams: _searchParams);
                           switch (_widgetType) {
                             case 'Scaffold':
                               Navigator.pushNamed(context, RouteNames.users);

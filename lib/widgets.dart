@@ -32,14 +32,14 @@ class MainDrawer extends StatelessWidget {
   }
 }
 
-class ImageUrlIndicator extends StatelessWidget {
+class ImageUrl extends StatelessWidget {
   final String url;
   final double height;
   final double width;
 
   final _widgetTypes = getIt.get<WidgetTypes>();
 
-  ImageUrlIndicator({this.url, this.height, this.width});
+  ImageUrl({this.url, this.height, this.width});
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,9 @@ import 'package:github_finder_rx_ks/pages/ChangePageNumber.dart';
 
 void main() {
   getIt.registerLazySingleton<StreamService>(() => StreamService());
-  getIt.registerLazySingleton<WidgetTypes>(() => WidgetTypes());
+  getIt.registerLazySingleton<WidgetTypes>(() => WidgetTypes(crossAxisCount: 2, imageType: false, showResultGridList: 1));
+  getIt.registerLazySingleton<SearchParameters>(() => SearchParameters(pageNumber: 1, resultPerPage: 50));
+
   runApp(MaterialApp(
     initialRoute: RouteNames.index,
     routes: {
